@@ -1,0 +1,12 @@
+name: influxdb
+services:
+    influxdb:
+        ports:
+            - 8086:8086
+        volumes:
+            - myInfluxVolume:/var/lib/influxdb2
+        image: influxdb:latest
+volumes:
+    myInfluxVolume:
+        external:
+            name: myInfluxVolume
