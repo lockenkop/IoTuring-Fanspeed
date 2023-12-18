@@ -6,14 +6,16 @@ import inspect # Configurations file path manipulation
 
 from IoTuring.Logger.LogObject import LogObject
 from IoTuring.MyApp.App import App # App name
+from IoTuring.MyApp.SystemConsts import OperatingSystemDetection as OsD
 
 # macOS dep (in PyObjC)
-try:
-    from AppKit import * # type:ignore
-    from Foundation import * # type:ignore
-    macos_support = True
-except:
-    macos_support = False
+if OsD.IsMacos():
+    try:
+        from AppKit import * # type:ignore
+        from Foundation import * # type:ignore
+        macos_support = True
+    except:
+        macos_support = False
 
 CONFIG_PATH_ENV_VAR = "IOTURING_CONFIG_DIR"
 

@@ -5,7 +5,7 @@ import re
 import subprocess
 
 from IoTuring.Entity.Entity import Entity 
-from ValueFormatter import ValueFormatter
+from IoTuring.Entity.ValueFormat import ValueFormatter, ValueFormatterOptions
 
 supports_win_signal_strenght = True
 supports_linux_signal_strenght = True 
