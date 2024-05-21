@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
+import signal
+import sys
+import time
+import argparse
+
 from IoTuring.MyApp.App import App
 from IoTuring.Configurator.Configurator import Configurator
 from IoTuring.Configurator.ConfiguratorLoader import ConfiguratorLoader
 from IoTuring.Entity.EntityManager import EntityManager
+from IoTuring.Settings.SettingsManager import SettingsManager
 from IoTuring.Logger.Logger import Logger
 from IoTuring.Logger.Colors import Colors
-import signal
-import os
-import time
-import argparse
 
 warehouses = []
 entities = []
@@ -40,9 +42,9 @@ def loop():
 
     # Only one argument should be used:
     if all(vars(args).values()):
-        print("error: use only one option!", end="\n\n")
         parser.print_help()
-        os._exit(0)
+        print()
+        sys.exit("Error: Invalid arguments!")
 
     # Clear the terminal
     Configurator.ClearTerminal()
@@ -51,6 +53,9 @@ def loop():
     logger = Logger()
     configurator = Configurator()
 
+    # Early log settings:
+    ConfiguratorLoader(configurator).LoadSettings(early_init=True)
+
     logger.Log(Logger.LOG_DEBUG, "App", f"Selected options: {vars(args)}")
 
     if args.configurator:
@@ -58,7 +63,7 @@ def loop():
             # Check old location:
             configurator.CheckFile()
 
-            configurator.Menu(clear_screen=False)
+            configurator.Menu()
         except KeyboardInterrupt:
             logger.Log(Logger.LOG_WARNING, "Configurator",
                        "Configuration NOT saved")
@@ -66,14 +71,22 @@ def loop():
 
     elif args.open_config:
         configurator.OpenConfigInEditor()
-        os._exit(0)
+        sys.exit(0)
 
     # This have to start after configurator.Menu(), otherwise won't work starting from the menu
     signal.signal(signal.SIGINT, Exit_SIGINT_handler)
 
+    # Load Settings:
+    settings = ConfiguratorLoader(configurator).LoadSettings()
+    sM = SettingsManager()
+    sM.AddSettings(settings)
+
     logger.Log(Logger.LOG_INFO, "App", App())  # Print App info
-    logger.Log(Logger.LOG_INFO, "Configurator",
-               "Run the script with -c to enter configuration mode")
+
+    # Add help if not started from Configurator
+    if not args.configurator:
+        logger.Log(Logger.LOG_INFO, "Configurator",
+                   "Run the script with -c to enter configuration mode")
 
     eM = EntityManager()
 
@@ -105,20 +118,13 @@ def loop():
 def Exit_SIGINT_handler(sig=None, frame=None):
     logger = Logger()
     logger.Log(Logger.LOG_INFO, "Main", "Application closed by SigInt",
-               printToConsole=False)  # to file
+               logtarget=Logger.LOGTARGET_FILE)  # to file
 
     messages = ["Exiting...",
                 "Thanks for using IoTuring !"]
-    print()  # New line
-    for message in messages:
-        text = ""
-        if (Logger.checkTerminalSupportsColors()):
-            text += Colors.cyan
-        text += message
-        if (Logger.checkTerminalSupportsColors()):
-            text += Colors.reset
-        logger.Log(Logger.LOG_INFO, "Main", text,
-                   writeToFile=False)  # to terminal
 
-    logger.CloseFile()
-    os._exit(0)
+    print()  # New line
+    logger.Log(Logger.LOG_INFO, "Main", messages,
+               color=Colors.cyan, logtarget=Logger.LOGTARGET_CONSOLE)
+
+    sys.exit(0)
