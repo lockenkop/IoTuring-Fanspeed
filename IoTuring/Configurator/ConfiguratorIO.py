@@ -9,7 +9,7 @@ from IoTuring.MyApp.SystemConsts import OperatingSystemDetection as OsD
 
 # macOS dep (in PyObjC)
 try:
-    from AppKit import *  # type:ignore
+    from AppKit import *  # type:ignore @IgnoreException
     from Foundation import *  # type:ignore
     macos_support = True
 except:

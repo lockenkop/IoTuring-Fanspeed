@@ -7,14 +7,14 @@ from IoTuring.MyApp.SystemConsts import DesktopEnvironmentDetection as De
 
 # Windows dep
 try:
-    from win32gui import GetWindowText, GetForegroundWindow  # type: ignore
+    from win32gui import GetWindowText, GetForegroundWindow  # type: ignore @IgnoreException
     windows_support = True
 except BaseException:
     windows_support = False
 
 # macOS dep
 try:
-    from AppKit import NSWorkspace  # type: ignore
+    from AppKit import NSWorkspace  # type: ignore @IgnoreException
     macos_support = True
 except BaseException:
     macos_support = False

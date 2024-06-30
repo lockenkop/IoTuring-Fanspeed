@@ -9,7 +9,7 @@ import json
 
 supports_win = True
 try:
-    import tinyWinToast.tinyWinToast as twt  # type: ignore
+    import tinyWinToast.tinyWinToast as twt  # type: ignore @IgnoreException
 except:
     supports_win = False
 
