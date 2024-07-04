@@ -15,7 +15,14 @@ class DesktopEnvironmentDetection():
     def IsWayland() -> bool:
         return bool(
             OsD.GetEnv('WAYLAND_DISPLAY') or
-            OsD.GetEnv('XDG_SESSION_TYPE') == 'wayland'
+            OsD.GetEnv('XDG_SESSION_TYPE') == 'wayland' or
+            p = subprocess.run(['loginctl', "show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}'"])
+            )
+    @staticmethod
+    def IsX11() -> bool:
+        return bool(
+            OsD.GetEnv('DISPLAY') and
+            not DesktopEnvironmentDetection.IsWayland()
             )
 
     @staticmethod
@@ -24,7 +31,7 @@ class DesktopEnvironmentDetection():
         if not OsD.CommandExists("xset"):
             raise Exception("xset command not found!")
         else:
-            # Check if xset is working:
+            # Check if xset is working:e
             p = subprocess.run(['xset', 'dpms'], capture_output=True, shell=False)
             if p.stderr:
                 raise Exception(f"Xset dpms error: {p.stderr.decode()}")
@@ -40,3 +47,4 @@ class DesktopEnvironmentDetection():
             return True
         except:
             return False
+

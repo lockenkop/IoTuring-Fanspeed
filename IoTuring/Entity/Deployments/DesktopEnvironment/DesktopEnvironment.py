@@ -2,9 +2,11 @@ from IoTuring.Entity.Entity import Entity
 from IoTuring.Entity.EntityData import EntitySensor
 from IoTuring.MyApp.SystemConsts import DesktopEnvironmentDetection as De
 from IoTuring.MyApp.SystemConsts import OperatingSystemDetection as OsD
+from IoTuring.Configurator.MenuPreset import MenuPreset
 
 KEY_DE = 'desktop_environment'
 EXTRA_KEY_WAYLAND = 'wayland'
+EXTRA_KEY_X11 = 'x11'
 
 # TODO Here I need the possibility for fixed value -> a configuration
 
